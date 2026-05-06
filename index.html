@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="style/style.css">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Digdeep band></title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-image: url('images/flythresh.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .popup {
+            position: fixed;
+            width: 280px;
+            padding: 15px;
+            background: black;
+            color: white;
+            border: 3px solid yellow;
+            box-shadow: 0 0 15px yellow;
+            animation: flicker 0.01s infinite alternate;
+            z-index: 9999;
+            cursor: move;
+            /* Show move cursor */
+        }
+
+        .popup h2 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+
+        .popup img {
+            max-width: 100%;
+            /* Fit inside popup width */
+            height: auto;
+            /* Keep aspect ratio */
+            display: block;
+            margin-bottom: 10px;
+            border: 2px solid white;
+        }
+
+        .popup button {
+            background: yellow;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @keyframes flicker {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0.7;
+            }
+        }
+    </style>
+
+
+
+</head>
+
+<body>
+    <script>
+
+
+
+        function createPopup(title, message, imageUrl, soundUrl) {
+            const popup = document.createElement("div");
+            popup.className = "popup";
+            popup.style.top = Math.random() * (window.innerHeight - 180) + "px";
+            popup.style.left = Math.random() * (window.innerWidth - 300) + "px";
+
+            const titleEl = document.createElement("h2");
+            titleEl.textContent = title;
+            popup.appendChild(titleEl);
+
+            if (imageUrl) {
+                const img = document.createElement("img");
+                img.src = imageUrl;
+                img.alt = "Popup Image";
+                popup.appendChild(img);
+            }
+
+            const msg = document.createElement("p");
+            msg.textContent = message;
+            popup.appendChild(msg);
+
+            // ✅ Create audio once (but do NOT autoplay)
+            let audio = null;
+            if (soundUrl) {
+                try {
+                    audio = new Audio(soundUrl);
+                    audio.preload = "auto";
+                } catch (e) {
+                    console.error("Invalid sound file:", e);
+                }
+            }
+
+            const btn = document.createElement("button");
+            btn.textContent = "CLICK TO SWAT ME";
+
+            // ✅ Play sound on user interaction (browser-safe)
+            btn.onclick = () => {
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(err => {
+                        console.warn("User-initiated sound failed:", err);
+                    });
+                }
+                popup.remove();
+            };
+
+            popup.appendChild(btn);
+            document.body.appendChild(popup);
+
+            makeDraggable(popup);
+        }
+
+
+        /**
+         * Makes an element draggable by mouse.
+         */
+        function makeDraggable(el) {
+            let offsetX = 0, offsetY = 0, isDragging = false;
+
+            el.addEventListener("mousedown", (e) => {
+                isDragging = true;
+                offsetX = e.clientX - el.offsetLeft;
+                offsetY = e.clientY - el.offsetTop;
+                el.style.zIndex = 10000; // Bring to front
+            });
+
+            document.addEventListener("mousemove", (e) => {
+                if (isDragging) {
+                    el.style.left = (e.clientX - offsetX) + "px";
+                    el.style.top = (e.clientY - offsetY) + "px";
+                }
+            });
+
+            document.addEventListener("mouseup", () => {
+                isDragging = false;
+            });
+        }
+        // Example popups
+        const popupsData = [
+            { title: "FLY ALERT", message: "SWAT ME", imageUrl: "images/flythresh.jpg", soundUrl: "sounds/fly.m4a" },
+            { title: "FLY ALERT", message: "OVER HERE", imageUrl: "images/flythresh.jpg", soundUrl: "sounds/fly.m4a" },
+            { title: "FLY ALERT", message: "IM HERE", imageUrl: "images/flythresh.jpg", soundUrl: "sounds/fly.m4a" },
+            { title: "FLY ALERT", message: "HERE", imageUrl: "images/flythresh.jpg", soundUrl: "sounds/fly.m4a" },
+            { title: "FLY ALERT", message: "SWAT ME DUMBASS", imageUrl: "images/flythresh.jpg", soundUrl: "sounds/fly.m4a" },
+
+        ];
+
+        // Show them one by one
+        let index = 0;
+        const interval = setInterval(() => {
+            const data = popupsData[index];
+            createPopup(data.title, data.message, data.imageUrl, data.soundUrl);
+            index++;
+            if (index >= popupsData.length) clearInterval(interval);
+        }, 3000);
+    </script>
+
+
+    <div class="container">
+        <img src="images/DIGDEEPSQUARES.jpg" alt="ddsquares" style="width:100%;">
+        <div class="centered">
+
+        </div>
+    </div>
+
+
+</body>
+
+</html>
